@@ -13,11 +13,13 @@
 #include <set>
 #include <string>
 #include <unordered_set>
+#include <sstream>
 
-std::string kYourName = "STUDENT TODO"; // Don't forget to change this!
+std::string kYourName = "YuTaki X"; // Don't forget to change this!
 
 /**
  * Takes in a file name and returns a set containing all of the applicant names as a set.
+ * 获取一个file name并返回一个包含所有名字的集合
  *
  * @param filename  The name of the file to read.
  *                  Each line of the file will be a single applicant's name.
@@ -29,6 +31,29 @@ std::string kYourName = "STUDENT TODO"; // Don't forget to change this!
  */
 std::set<std::string> get_applicants(std::string filename) {
   // STUDENT TODO: Implement this function.
+  std::set<std::string> students;
+  std::ifstream inputFile;
+  inputFile.open(filename);
+  if (inputFile.is_open()) {
+    std::string line;
+    while (std::getline(inputFile, line)) {
+      students.insert(line);
+    }
+  }
+  inputFile.close();
+  return students;
+}
+
+std::string helper(std::string name) {
+  std::stringstream ss;
+  ss << name;
+  std::string first;
+  std::string last;
+  ss >> first >> last;
+  std::string res;
+  res += first[0];
+  res += last[0];
+  return res;
 }
 
 /**
@@ -41,6 +66,13 @@ std::set<std::string> get_applicants(std::string filename) {
  */
 std::queue<const std::string*> find_matches(std::string name, std::set<std::string>& students) {
   // STUDENT TODO: Implement this function.
+  std::queue<const std::string*> res;
+  for (const auto& student : students) {
+    if (helper(name) == helper(student)) {
+      res.push(&student);
+    }
+  }
+  return res;
 }
 
 /**
@@ -55,6 +87,11 @@ std::queue<const std::string*> find_matches(std::string name, std::set<std::stri
  */
 std::string get_match(std::queue<const std::string*>& matches) {
   // STUDENT TODO: Implement this function.
+  if (!matches.empty()) {
+    return *matches.front();
+  } else {
+    return "NO MATCHES FOUND.";
+  }
 }
 
 /* #### Please don't remove this line! #### */
