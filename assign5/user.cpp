@@ -63,3 +63,56 @@ void User::set_friend(size_t index, const std::string& name)
  * STUDENT TODO:
  * The definitions for your custom operators and special member functions will go here!
  */
+std::ostream& operator<<(std::ostream& os, const User& us) {
+  os << "User(name=" << us.get_name() << ", friends=[";
+
+  for (size_t i = 0; i < us.size(); ++i) {
+    if (i == us.size() - 1) {
+      os << us._friends[i];
+    } else {
+      os << us._friends[i] << ", ";
+    }
+  }
+  os << "])";
+  return os;
+}
+
+User::~User() {
+  delete[] _friends;
+}
+
+User::User(const User& user):
+  _name(user._name),
+  _size(user._size),
+  _capacity(user._capacity),
+  _friends(new std::string[user._capacity]) {
+    for (size_t i = 0; i < user._size; ++i) {
+      _friends[i] = user._friends[i];
+    }
+  }
+
+User& User::operator=(const User& user) {
+  if (this == &user) {
+    return *this;
+  }
+  delete[] _friends;
+
+  _name = user._name;
+  _size = user._size;
+  _capacity = user._capacity;
+  _friends = new std::string[user._capacity];
+  for (size_t i = 0; i < user._size; i++) {
+    _friends[i] = user._friends[i];
+  }
+  return *this;
+}
+
+User& User::operator+=(User& rhs) {
+  this->add_friend(rhs.get_name());
+  rhs.add_friend(this->get_name());
+  return *this;
+}
+
+bool User::operator<(const User& rhs) const {
+  return this->get_name()[0] < rhs.get_name()[0];
+}
