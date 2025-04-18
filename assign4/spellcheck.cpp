@@ -26,11 +26,7 @@ Corpus tokenize(const std::string& source) {
   // get rid of empty tokens
   std::erase_if(tokens, 
                 [] (Token token) {
-                  if (token.content.empty()) {
-                    return true;
-                  } else {
-                    return false;
-                  }
+                  return token.content.empty();
                 }
                 );
 
@@ -40,13 +36,9 @@ Corpus tokenize(const std::string& source) {
 namespace rv = std::ranges::views;
 
 std::set<Mispelling> spellcheck(const Corpus& source, const Dictionary& dictionary) {
-  auto view = source | rv::filter([dictionary] (Token token) {
-                                                  if (dictionary.contains(token.content)) {
-                                                    return false;
-                                                  } else {
-                                                    return true;
-                                                  }
-  }) | rv::transform([dictionary] (Token token) -> Mispelling {
+  auto view = source | rv::filter([&dictionary] (Token token) {
+    return !dictionary.contains(token.content);
+  }) | rv::transform([&dictionary] (Token token) -> Mispelling {
     auto view = dictionary | rv::filter([token] (std::string str) {
       return levenshtein(token.content, str) == 1;
     });
